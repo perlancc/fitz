@@ -1,0 +1,12 @@
+#image processing:
+opencv-python
+Pillow
+numpy
+rembg
+
+#api:
+fastapi
+uvicorn
+python-multipart
+
+
