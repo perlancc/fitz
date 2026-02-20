@@ -2,7 +2,8 @@
 opencv-python
 Pillow
 numpy
-rembg
+rembg -> rembg[gpu]
+pillow-heif
 
 #api:
 fastapi
