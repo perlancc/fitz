@@ -1,0 +1,1560 @@
+create schema if not exists extensions;਍ഀ
+create extension if not exists citext with schema extensions;਍ഀ
+create extension if not exists pgcrypto;਍ഀ
+਍ഀ
+--਍ഀ
+-- PostgreSQL database dump਍ഀ
+--਍ഀ
+਍ഀ
+਍ഀ
+਍ഀ
+-- Dumped from database version 17.6਍ഀ
+-- Dumped by pg_dump version 18.1਍ഀ
+਍ഀ
+SET statement_timeout = 0;਍ഀ
+SET lock_timeout = 0;਍ഀ
+SET idle_in_transaction_session_timeout = 0;਍ഀ
+SET transaction_timeout = 0;਍ഀ
+SET client_encoding = 'UTF8';਍ഀ
+SET standard_conforming_strings = on;਍ഀ
+SELECT pg_catalog.set_config('search_path', '', false);਍ഀ
+SET check_function_bodies = false;਍ഀ
+SET xmloption = content;਍ഀ
+SET client_min_messages = warning;਍ഀ
+SET row_security = off;਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: fitz; Type: SCHEMA; Schema: -; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE SCHEMA fitz;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: set_updated_at(); Type: FUNCTION; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE FUNCTION fitz.set_updated_at() RETURNS trigger਍ഀ
+    LANGUAGE plpgsql਍ഀ
+    SET search_path TO 'pg_catalog', 'fitz'਍ഀ
+    AS $$਍ഀ
+਍ഀ
+begin਍ഀ
+਍ഀ
+  new.updated_at = now();਍ഀ
+਍ഀ
+  return new;਍ഀ
+਍ഀ
+end;਍ഀ
+਍ഀ
+$$;਍ഀ
+਍ഀ
+਍ഀ
+SET default_tablespace = '';਍ഀ
+਍ഀ
+SET default_table_access_method = heap;਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: brands; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.brands (਍ഀ
+    brand_id bigint NOT NULL,਍ഀ
+    name extensions.citext NOT NULL,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: brands_brand_id_seq; Type: SEQUENCE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE SEQUENCE fitz.brands_brand_id_seq਍ഀ
+    START WITH 1਍ഀ
+    INCREMENT BY 1਍ഀ
+    NO MINVALUE਍ഀ
+    NO MAXVALUE਍ഀ
+    CACHE 1;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: brands_brand_id_seq; Type: SEQUENCE OWNED BY; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER SEQUENCE fitz.brands_brand_id_seq OWNED BY fitz.brands.brand_id;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: care_instructions; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.care_instructions (਍ഀ
+    item_id uuid NOT NULL,਍ഀ
+    wash_temp text,਍ഀ
+    dry_method text,਍ഀ
+    iron text,਍ഀ
+    bleach text,਍ഀ
+    extra_notes text,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: categories; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.categories (਍ഀ
+    category_id bigint NOT NULL,਍ഀ
+    name text NOT NULL,਍ഀ
+    description text,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: categories_category_id_seq; Type: SEQUENCE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE SEQUENCE fitz.categories_category_id_seq਍ഀ
+    START WITH 1਍ഀ
+    INCREMENT BY 1਍ഀ
+    NO MINVALUE਍ഀ
+    NO MAXVALUE਍ഀ
+    CACHE 1;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: categories_category_id_seq; Type: SEQUENCE OWNED BY; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER SEQUENCE fitz.categories_category_id_seq OWNED BY fitz.categories.category_id;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: clothing_items; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.clothing_items (਍ഀ
+    item_id uuid DEFAULT gen_random_uuid() NOT NULL,਍ഀ
+    user_id uuid NOT NULL,਍ഀ
+    item_name text NOT NULL,਍ഀ
+    item_type text NOT NULL,਍ഀ
+    notes text,਍ഀ
+    is_favorite boolean DEFAULT false NOT NULL,਍ഀ
+    category_id bigint,਍ഀ
+    brand_id bigint,਍ഀ
+    size text,਍ഀ
+    material text,਍ഀ
+    purchase_price numeric(10,2),਍ഀ
+    purchase_date date,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: colors; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.colors (਍ഀ
+    color_id bigint NOT NULL,਍ഀ
+    name text NOT NULL,਍ഀ
+    hex_code text,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: colors_color_id_seq; Type: SEQUENCE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE SEQUENCE fitz.colors_color_id_seq਍ഀ
+    START WITH 1਍ഀ
+    INCREMENT BY 1਍ഀ
+    NO MINVALUE਍ഀ
+    NO MAXVALUE਍ഀ
+    CACHE 1;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: colors_color_id_seq; Type: SEQUENCE OWNED BY; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER SEQUENCE fitz.colors_color_id_seq OWNED BY fitz.colors.color_id;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_colors; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.item_colors (਍ഀ
+    item_id uuid NOT NULL,਍ഀ
+    color_id bigint NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_occasions; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.item_occasions (਍ഀ
+    item_id uuid NOT NULL,਍ഀ
+    occasion_id bigint NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_photos; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.item_photos (਍ഀ
+    photo_id uuid DEFAULT gen_random_uuid() NOT NULL,਍ഀ
+    item_id uuid NOT NULL,਍ഀ
+    image_url text,਍ഀ
+    storage_bucket text,਍ഀ
+    storage_path text,਍ഀ
+    is_primary boolean DEFAULT false NOT NULL,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    CONSTRAINT item_photos_has_location CHECK (((image_url IS NOT NULL) OR ((storage_bucket IS NOT NULL) AND (storage_path IS NOT NULL))))਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_seasons; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.item_seasons (਍ഀ
+    item_id uuid NOT NULL,਍ഀ
+    season_id bigint NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_tags; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.item_tags (਍ഀ
+    item_id uuid NOT NULL,਍ഀ
+    tag_id uuid NOT NULL,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: locations; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.locations (਍ഀ
+    location_id uuid DEFAULT gen_random_uuid() NOT NULL,਍ഀ
+    user_id uuid NOT NULL,਍ഀ
+    name text NOT NULL,਍ഀ
+    description text,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: materials; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.materials (਍ഀ
+    material_id bigint NOT NULL,਍ഀ
+    name text NOT NULL,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: materials_material_id_seq; Type: SEQUENCE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE SEQUENCE fitz.materials_material_id_seq਍ഀ
+    START WITH 1਍ഀ
+    INCREMENT BY 1਍ഀ
+    NO MINVALUE਍ഀ
+    NO MAXVALUE਍ഀ
+    CACHE 1;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: materials_material_id_seq; Type: SEQUENCE OWNED BY; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER SEQUENCE fitz.materials_material_id_seq OWNED BY fitz.materials.material_id;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: migration_user_map; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.migration_user_map (਍ഀ
+    old_user_id uuid NOT NULL,਍ഀ
+    new_user_id uuid NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: occasions; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.occasions (਍ഀ
+    occasion_id bigint NOT NULL,਍ഀ
+    name text NOT NULL,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: occasions_occasion_id_seq; Type: SEQUENCE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE SEQUENCE fitz.occasions_occasion_id_seq਍ഀ
+    START WITH 1਍ഀ
+    INCREMENT BY 1਍ഀ
+    NO MINVALUE਍ഀ
+    NO MAXVALUE਍ഀ
+    CACHE 1;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: occasions_occasion_id_seq; Type: SEQUENCE OWNED BY; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER SEQUENCE fitz.occasions_occasion_id_seq OWNED BY fitz.occasions.occasion_id;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: outfit_items; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.outfit_items (਍ഀ
+    outfit_id uuid NOT NULL,਍ഀ
+    item_id uuid NOT NULL,਍ഀ
+    role text਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: outfits; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.outfits (਍ഀ
+    outfit_id uuid DEFAULT gen_random_uuid() NOT NULL,਍ഀ
+    user_id uuid NOT NULL,਍ഀ
+    outfit_name text NOT NULL,਍ഀ
+    notes text,਍ഀ
+    is_favorite boolean DEFAULT false NOT NULL,਍ഀ
+    generated_by_ai boolean DEFAULT false NOT NULL,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: seasons; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.seasons (਍ഀ
+    season_id bigint NOT NULL,਍ഀ
+    name text NOT NULL,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: seasons_season_id_seq; Type: SEQUENCE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE SEQUENCE fitz.seasons_season_id_seq਍ഀ
+    START WITH 1਍ഀ
+    INCREMENT BY 1਍ഀ
+    NO MINVALUE਍ഀ
+    NO MAXVALUE਍ഀ
+    CACHE 1;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: seasons_season_id_seq; Type: SEQUENCE OWNED BY; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER SEQUENCE fitz.seasons_season_id_seq OWNED BY fitz.seasons.season_id;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_requests; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.suggestion_requests (਍ഀ
+    request_id uuid DEFAULT gen_random_uuid() NOT NULL,਍ഀ
+    user_id uuid NOT NULL,਍ഀ
+    occasion_id bigint,਍ഀ
+    season_id bigint,਍ഀ
+    color_preference bigint,਍ഀ
+    weather_note text,਍ഀ
+    style_note text,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_results; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.suggestion_results (਍ഀ
+    result_id uuid DEFAULT gen_random_uuid() NOT NULL,਍ഀ
+    request_id uuid NOT NULL,਍ഀ
+    outfit_id uuid,਍ഀ
+    confidence_score numeric(5,4),਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: tags; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.tags (਍ഀ
+    tag_id uuid DEFAULT gen_random_uuid() NOT NULL,਍ഀ
+    user_id uuid NOT NULL,਍ഀ
+    name text NOT NULL,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: users; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.users (਍ഀ
+    user_id uuid NOT NULL,਍ഀ
+    email text,਍ഀ
+    first_name text,਍ഀ
+    last_name text,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wash_log; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.wash_log (਍ഀ
+    wash_id uuid DEFAULT gen_random_uuid() NOT NULL,਍ഀ
+    user_id uuid NOT NULL,਍ഀ
+    item_id uuid NOT NULL,਍ഀ
+    cleaned_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    note text,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wear_log; Type: TABLE; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TABLE fitz.wear_log (਍ഀ
+    wear_id uuid DEFAULT gen_random_uuid() NOT NULL,਍ഀ
+    user_id uuid NOT NULL,਍ഀ
+    item_id uuid NOT NULL,਍ഀ
+    worn_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    note text,਍ഀ
+    created_at timestamp with time zone DEFAULT now() NOT NULL,਍ഀ
+    updated_at timestamp with time zone DEFAULT now() NOT NULL਍ഀ
+);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: brands brand_id; Type: DEFAULT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.brands ALTER COLUMN brand_id SET DEFAULT nextval('fitz.brands_brand_id_seq'::regclass);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: categories category_id; Type: DEFAULT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.categories ALTER COLUMN category_id SET DEFAULT nextval('fitz.categories_category_id_seq'::regclass);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: colors color_id; Type: DEFAULT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.colors ALTER COLUMN color_id SET DEFAULT nextval('fitz.colors_color_id_seq'::regclass);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: materials material_id; Type: DEFAULT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.materials ALTER COLUMN material_id SET DEFAULT nextval('fitz.materials_material_id_seq'::regclass);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: occasions occasion_id; Type: DEFAULT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.occasions ALTER COLUMN occasion_id SET DEFAULT nextval('fitz.occasions_occasion_id_seq'::regclass);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: seasons season_id; Type: DEFAULT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.seasons ALTER COLUMN season_id SET DEFAULT nextval('fitz.seasons_season_id_seq'::regclass);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: brands; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.brands (brand_id, name, created_at, updated_at) FROM stdin;਍ഀ
+1	Nike	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+2	Adidas	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+3	Zara	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+4	H&M	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+5	Uniqlo	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+17	Levi's	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: care_instructions; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.care_instructions (item_id, wash_temp, dry_method, iron, bleach, extra_notes, created_at, updated_at) FROM stdin;਍ഀ
+befe54a9-405e-49b8-ae63-f06e5ead8d38	Cold	Hang Dry	Low	No	Do not over-dry	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: categories; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.categories (category_id, name, description, created_at, updated_at) FROM stdin;਍ഀ
+1	Tops	\N	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+2	Bottoms	\N	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+3	Dresses	\N	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+4	Outerwear	\N	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+5	Shoes	\N	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+6	Accessories	\N	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+7	Activewear	\N	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+8	Sleepwear	\N	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: clothing_items; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.clothing_items (item_id, user_id, item_name, item_type, notes, is_favorite, category_id, brand_id, size, material, purchase_price, purchase_date, created_at, updated_at) FROM stdin;਍ഀ
+2ae3779e-adb8-43f2-801b-c4819260eb99	33b53f52-6f31-42a4-811d-6bf80034a76c	White Sneakers	shoes	Comfortable sneakers	t	5	1	9	Leather	\N	\N	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+befe54a9-405e-49b8-ae63-f06e5ead8d38	33b53f52-6f31-42a4-811d-6bf80034a76c	Black Blazer	outerwear	Polished blazer for work/interviews	t	4	3	M	Wool	\N	\N	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+96794980-449e-4eab-a7cb-ee5dcef3aaa8	33b53f52-6f31-42a4-811d-6bf80034a76c	Red Hoodie	tops	Warm hoodie for casual days	f	1	4	L	Cotton	\N	\N	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+79e5fc94-bb4c-4d44-a5a4-be8cbd208024	33b53f52-6f31-42a4-811d-6bf80034a76c	Blue Jeans	bottoms	Everyday denim	f	2	17	M	Denim	\N	\N	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: colors; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.colors (color_id, name, hex_code, created_at, updated_at) FROM stdin;਍ഀ
+1	Black	#000000	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+2	White	#FFFFFF	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+3	Gray	#808080	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+4	Blue	#0000FF	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+5	Red	#FF0000	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+6	Green	#00FF00	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+7	Brown	#8B4513	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+8	Beige	#F5F5DC	2026-02-06 00:37:04.578607+00	2026-02-06 00:37:04.578607+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: item_colors; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.item_colors (item_id, color_id) FROM stdin;਍ഀ
+2ae3779e-adb8-43f2-801b-c4819260eb99	2਍ഀ
+befe54a9-405e-49b8-ae63-f06e5ead8d38	1਍ഀ
+96794980-449e-4eab-a7cb-ee5dcef3aaa8	5਍ഀ
+79e5fc94-bb4c-4d44-a5a4-be8cbd208024	4਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: item_occasions; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.item_occasions (item_id, occasion_id) FROM stdin;਍ഀ
+2ae3779e-adb8-43f2-801b-c4819260eb99	1਍ഀ
+befe54a9-405e-49b8-ae63-f06e5ead8d38	2਍ഀ
+befe54a9-405e-49b8-ae63-f06e5ead8d38	3਍ഀ
+befe54a9-405e-49b8-ae63-f06e5ead8d38	22਍ഀ
+96794980-449e-4eab-a7cb-ee5dcef3aaa8	1਍ഀ
+79e5fc94-bb4c-4d44-a5a4-be8cbd208024	1਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: item_photos; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.item_photos (photo_id, item_id, image_url, storage_bucket, storage_path, is_primary, created_at, updated_at) FROM stdin;਍ഀ
+4d6f8f08-9da8-46f1-8446-bbf2d0e0f4eb	befe54a9-405e-49b8-ae63-f06e5ead8d38	https://example.com/photo1.jpg	\N	\N	t	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: item_seasons; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.item_seasons (item_id, season_id) FROM stdin;਍ഀ
+2ae3779e-adb8-43f2-801b-c4819260eb99	1਍ഀ
+2ae3779e-adb8-43f2-801b-c4819260eb99	2਍ഀ
+2ae3779e-adb8-43f2-801b-c4819260eb99	3਍ഀ
+2ae3779e-adb8-43f2-801b-c4819260eb99	4਍ഀ
+befe54a9-405e-49b8-ae63-f06e5ead8d38	3਍ഀ
+befe54a9-405e-49b8-ae63-f06e5ead8d38	4਍ഀ
+96794980-449e-4eab-a7cb-ee5dcef3aaa8	3਍ഀ
+96794980-449e-4eab-a7cb-ee5dcef3aaa8	4਍ഀ
+79e5fc94-bb4c-4d44-a5a4-be8cbd208024	1਍ഀ
+79e5fc94-bb4c-4d44-a5a4-be8cbd208024	2਍ഀ
+79e5fc94-bb4c-4d44-a5a4-be8cbd208024	3਍ഀ
+79e5fc94-bb4c-4d44-a5a4-be8cbd208024	4਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: item_tags; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.item_tags (item_id, tag_id, created_at) FROM stdin;਍ഀ
+befe54a9-405e-49b8-ae63-f06e5ead8d38	a9f27559-0450-4dfd-ab83-b37e5d4c82a0	2026-02-06 01:36:57.843901+00਍ഀ
+befe54a9-405e-49b8-ae63-f06e5ead8d38	0dcbe0b7-b6e0-488e-9896-0ac91154cec7	2026-02-06 01:36:57.843901+00਍ഀ
+96794980-449e-4eab-a7cb-ee5dcef3aaa8	5ea4f412-ca35-4057-a034-d41ccbae3d0d	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: locations; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.locations (location_id, user_id, name, description, created_at, updated_at) FROM stdin;਍ഀ
+684c2e8a-9f10-4ecb-9e0c-27f4c925a7bd	33b53f52-6f31-42a4-811d-6bf80034a76c	Main Closet	Primary bedroom closet	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+b19df953-c0ab-49aa-800f-7ac884a50654	33b53f52-6f31-42a4-811d-6bf80034a76c	Laundry Room	Near washer/dryer	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+26cc7f6c-dccf-4fc5-b78f-25efcfe76302	33b53f52-6f31-42a4-811d-6bf80034a76c	Dorm	Campus housing	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: materials; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.materials (material_id, name, created_at, updated_at) FROM stdin;਍ഀ
+6	Cotton	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+7	Denim	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+8	Polyester	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+9	Wool	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+10	Leather	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: migration_user_map; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.migration_user_map (old_user_id, new_user_id) FROM stdin;਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: occasions; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.occasions (occasion_id, name, created_at, updated_at) FROM stdin;਍ഀ
+1	Casual	2026-02-02 05:17:46.182012+00	2026-02-02 05:17:46.182012+00਍ഀ
+2	Work	2026-02-02 05:17:46.182012+00	2026-02-02 05:17:46.182012+00਍ഀ
+3	Formal	2026-02-02 05:17:46.182012+00	2026-02-02 05:17:46.182012+00਍ഀ
+4	Gym	2026-02-02 05:17:46.182012+00	2026-02-02 05:17:46.182012+00਍ഀ
+5	Date Night	2026-02-02 05:17:46.182012+00	2026-02-02 05:17:46.182012+00਍ഀ
+22	Interview	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: outfit_items; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.outfit_items (outfit_id, item_id, role) FROM stdin;਍ഀ
+b32618a3-8c93-4f7f-889b-64d7bd065fc9	2ae3779e-adb8-43f2-801b-c4819260eb99	shoes਍ഀ
+b32618a3-8c93-4f7f-889b-64d7bd065fc9	96794980-449e-4eab-a7cb-ee5dcef3aaa8	top਍ഀ
+b32618a3-8c93-4f7f-889b-64d7bd065fc9	79e5fc94-bb4c-4d44-a5a4-be8cbd208024	bottom਍ഀ
+4e75b49f-9d2f-4198-bee1-51cc5b368ffa	2ae3779e-adb8-43f2-801b-c4819260eb99	shoes਍ഀ
+4e75b49f-9d2f-4198-bee1-51cc5b368ffa	befe54a9-405e-49b8-ae63-f06e5ead8d38	layer਍ഀ
+4e75b49f-9d2f-4198-bee1-51cc5b368ffa	79e5fc94-bb4c-4d44-a5a4-be8cbd208024	bottom਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: outfits; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.outfits (outfit_id, user_id, outfit_name, notes, is_favorite, generated_by_ai, created_at, updated_at) FROM stdin;਍ഀ
+b32618a3-8c93-4f7f-889b-64d7bd065fc9	33b53f52-6f31-42a4-811d-6bf80034a76c	Casual Day Outfit	Simple casual look	t	f	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+4e75b49f-9d2f-4198-bee1-51cc5b368ffa	33b53f52-6f31-42a4-811d-6bf80034a76c	Work Outfit	Polished and professional	f	f	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: seasons; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.seasons (season_id, name, created_at, updated_at) FROM stdin;਍ഀ
+1	Spring	2026-02-02 05:17:46.182012+00	2026-02-02 05:17:46.182012+00਍ഀ
+2	Summer	2026-02-02 05:17:46.182012+00	2026-02-02 05:17:46.182012+00਍ഀ
+3	Fall	2026-02-02 05:17:46.182012+00	2026-02-02 05:17:46.182012+00਍ഀ
+4	Winter	2026-02-02 05:17:46.182012+00	2026-02-02 05:17:46.182012+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: suggestion_requests; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.suggestion_requests (request_id, user_id, occasion_id, season_id, color_preference, weather_note, style_note, created_at) FROM stdin;਍ഀ
+b32679e3-56ef-45df-9d2d-7ca10e5c0c0e	33b53f52-6f31-42a4-811d-6bf80034a76c	2	3	\N	Cool weather	Comfortable but polished	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: suggestion_results; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.suggestion_results (result_id, request_id, outfit_id, confidence_score, created_at) FROM stdin;਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: tags; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.tags (tag_id, user_id, name, created_at, updated_at) FROM stdin;਍ഀ
+5ea4f412-ca35-4057-a034-d41ccbae3d0d	33b53f52-6f31-42a4-811d-6bf80034a76c	streetwear	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+a9f27559-0450-4dfd-ab83-b37e5d4c82a0	33b53f52-6f31-42a4-811d-6bf80034a76c	minimal	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+0dcbe0b7-b6e0-488e-9896-0ac91154cec7	33b53f52-6f31-42a4-811d-6bf80034a76c	classic	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: users; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.users (user_id, email, created_at) FROM stdin;਍ഀ
+33b53f52-6f31-42a4-811d-6bf80034a76c	jane.doe@gmail.com	2026-02-06 01:31:00.015924+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: wash_log; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.wash_log (wash_id, user_id, item_id, cleaned_at, note, created_at, updated_at) FROM stdin;਍ഀ
+aa163b38-3a5f-4b15-ad7f-f3610971e7cc	33b53f52-6f31-42a4-811d-6bf80034a76c	befe54a9-405e-49b8-ae63-f06e5ead8d38	2026-02-04 01:36:57.843901+00	Cold wash	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+25ef2c25-d2a3-4a82-9e44-1d8ff3787a5b	33b53f52-6f31-42a4-811d-6bf80034a76c	79e5fc94-bb4c-4d44-a5a4-be8cbd208024	2026-02-04 01:36:57.843901+00	Cold wash	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Data for Name: wear_log; Type: TABLE DATA; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+COPY fitz.wear_log (wear_id, user_id, item_id, worn_at, note, created_at, updated_at) FROM stdin;਍ഀ
+f4e0cf72-c525-4ecc-bb63-e614a7c97227	33b53f52-6f31-42a4-811d-6bf80034a76c	2ae3779e-adb8-43f2-801b-c4819260eb99	2026-02-05 01:36:57.843901+00	Worn recently	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+509040a2-04e0-4948-83bc-2392af3b8127	33b53f52-6f31-42a4-811d-6bf80034a76c	befe54a9-405e-49b8-ae63-f06e5ead8d38	2026-02-05 01:36:57.843901+00	Worn recently	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+13632028-1d63-4633-8626-e9157a1333b2	33b53f52-6f31-42a4-811d-6bf80034a76c	96794980-449e-4eab-a7cb-ee5dcef3aaa8	2026-02-05 01:36:57.843901+00	Worn recently	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+6e456196-5cc5-4365-9cc0-4e9a6cf0f3eb	33b53f52-6f31-42a4-811d-6bf80034a76c	79e5fc94-bb4c-4d44-a5a4-be8cbd208024	2026-02-05 01:36:57.843901+00	Worn recently	2026-02-06 01:36:57.843901+00	2026-02-06 01:36:57.843901+00਍ഀ
+\.਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: brands_brand_id_seq; Type: SEQUENCE SET; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+SELECT pg_catalog.setval('fitz.brands_brand_id_seq', 17, true);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: categories_category_id_seq; Type: SEQUENCE SET; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+SELECT pg_catalog.setval('fitz.categories_category_id_seq', 22, true);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: colors_color_id_seq; Type: SEQUENCE SET; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+SELECT pg_catalog.setval('fitz.colors_color_id_seq', 22, true);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: materials_material_id_seq; Type: SEQUENCE SET; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+SELECT pg_catalog.setval('fitz.materials_material_id_seq', 10, true);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: occasions_occasion_id_seq; Type: SEQUENCE SET; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+SELECT pg_catalog.setval('fitz.occasions_occasion_id_seq', 22, true);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: seasons_season_id_seq; Type: SEQUENCE SET; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+SELECT pg_catalog.setval('fitz.seasons_season_id_seq', 16, true);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: brands brands_name_key; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.brands਍ഀ
+    ADD CONSTRAINT brands_name_key UNIQUE (name);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: brands brands_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.brands਍ഀ
+    ADD CONSTRAINT brands_pkey PRIMARY KEY (brand_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: care_instructions care_instructions_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.care_instructions਍ഀ
+    ADD CONSTRAINT care_instructions_pkey PRIMARY KEY (item_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: categories categories_name_key; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.categories਍ഀ
+    ADD CONSTRAINT categories_name_key UNIQUE (name);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: categories categories_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.categories਍ഀ
+    ADD CONSTRAINT categories_pkey PRIMARY KEY (category_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: clothing_items clothing_items_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.clothing_items਍ഀ
+    ADD CONSTRAINT clothing_items_pkey PRIMARY KEY (item_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: colors colors_name_key; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.colors਍ഀ
+    ADD CONSTRAINT colors_name_key UNIQUE (name);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: colors colors_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.colors਍ഀ
+    ADD CONSTRAINT colors_pkey PRIMARY KEY (color_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_colors item_colors_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_colors਍ഀ
+    ADD CONSTRAINT item_colors_pkey PRIMARY KEY (item_id, color_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_occasions item_occasions_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_occasions਍ഀ
+    ADD CONSTRAINT item_occasions_pkey PRIMARY KEY (item_id, occasion_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_photos item_photos_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_photos਍ഀ
+    ADD CONSTRAINT item_photos_pkey PRIMARY KEY (photo_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_seasons item_seasons_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_seasons਍ഀ
+    ADD CONSTRAINT item_seasons_pkey PRIMARY KEY (item_id, season_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_tags item_tags_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_tags਍ഀ
+    ADD CONSTRAINT item_tags_pkey PRIMARY KEY (item_id, tag_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: locations locations_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.locations਍ഀ
+    ADD CONSTRAINT locations_pkey PRIMARY KEY (location_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: locations locations_user_name_unique; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.locations਍ഀ
+    ADD CONSTRAINT locations_user_name_unique UNIQUE (user_id, name);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: materials materials_name_key; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.materials਍ഀ
+    ADD CONSTRAINT materials_name_key UNIQUE (name);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: materials materials_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.materials਍ഀ
+    ADD CONSTRAINT materials_pkey PRIMARY KEY (material_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: migration_user_map migration_user_map_new_user_id_key; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.migration_user_map਍ഀ
+    ADD CONSTRAINT migration_user_map_new_user_id_key UNIQUE (new_user_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: migration_user_map migration_user_map_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.migration_user_map਍ഀ
+    ADD CONSTRAINT migration_user_map_pkey PRIMARY KEY (old_user_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: occasions occasions_name_key; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.occasions਍ഀ
+    ADD CONSTRAINT occasions_name_key UNIQUE (name);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: occasions occasions_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.occasions਍ഀ
+    ADD CONSTRAINT occasions_pkey PRIMARY KEY (occasion_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: outfit_items outfit_items_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.outfit_items਍ഀ
+    ADD CONSTRAINT outfit_items_pkey PRIMARY KEY (outfit_id, item_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: outfits outfits_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.outfits਍ഀ
+    ADD CONSTRAINT outfits_pkey PRIMARY KEY (outfit_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: seasons seasons_name_key; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.seasons਍ഀ
+    ADD CONSTRAINT seasons_name_key UNIQUE (name);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: seasons seasons_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.seasons਍ഀ
+    ADD CONSTRAINT seasons_pkey PRIMARY KEY (season_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_requests suggestion_requests_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.suggestion_requests਍ഀ
+    ADD CONSTRAINT suggestion_requests_pkey PRIMARY KEY (request_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_results suggestion_results_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.suggestion_results਍ഀ
+    ADD CONSTRAINT suggestion_results_pkey PRIMARY KEY (result_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: tags tags_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.tags਍ഀ
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (tag_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: tags tags_user_name_unique; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.tags਍ഀ
+    ADD CONSTRAINT tags_user_name_unique UNIQUE (user_id, name);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.users਍ഀ
+    ADD CONSTRAINT users_email_key UNIQUE (email);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.users਍ഀ
+    ADD CONSTRAINT users_pkey PRIMARY KEY (user_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wash_log wash_log_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.wash_log਍ഀ
+    ADD CONSTRAINT wash_log_pkey PRIMARY KEY (wash_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wear_log wear_log_pkey; Type: CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.wear_log਍ഀ
+    ADD CONSTRAINT wear_log_pkey PRIMARY KEY (wear_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: clothing_items_brand_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX clothing_items_brand_id_idx ON fitz.clothing_items USING btree (brand_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: clothing_items_category_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX clothing_items_category_id_idx ON fitz.clothing_items USING btree (category_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: clothing_items_user_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX clothing_items_user_id_idx ON fitz.clothing_items USING btree (user_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_colors_color_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX item_colors_color_id_idx ON fitz.item_colors USING btree (color_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_occasions_occasion_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX item_occasions_occasion_id_idx ON fitz.item_occasions USING btree (occasion_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_photos_item_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX item_photos_item_id_idx ON fitz.item_photos USING btree (item_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_seasons_season_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX item_seasons_season_id_idx ON fitz.item_seasons USING btree (season_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_tags_tag_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX item_tags_tag_id_idx ON fitz.item_tags USING btree (tag_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: locations_user_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX locations_user_id_idx ON fitz.locations USING btree (user_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: outfit_items_item_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX outfit_items_item_id_idx ON fitz.outfit_items USING btree (item_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: outfits_user_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX outfits_user_id_idx ON fitz.outfits USING btree (user_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_requests_user_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX suggestion_requests_user_id_idx ON fitz.suggestion_requests USING btree (user_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_results_request_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX suggestion_results_request_id_idx ON fitz.suggestion_results USING btree (request_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: tags_user_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX tags_user_id_idx ON fitz.tags USING btree (user_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wash_log_item_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX wash_log_item_id_idx ON fitz.wash_log USING btree (item_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wash_log_user_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX wash_log_user_id_idx ON fitz.wash_log USING btree (user_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wear_log_item_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX wear_log_item_id_idx ON fitz.wear_log USING btree (item_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wear_log_user_id_idx; Type: INDEX; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE INDEX wear_log_user_id_idx ON fitz.wear_log USING btree (user_id);਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: brands brands_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER brands_set_updated_at BEFORE UPDATE ON fitz.brands FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: care_instructions care_instructions_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER care_instructions_set_updated_at BEFORE UPDATE ON fitz.care_instructions FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: categories categories_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER categories_set_updated_at BEFORE UPDATE ON fitz.categories FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: clothing_items clothing_items_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER clothing_items_set_updated_at BEFORE UPDATE ON fitz.clothing_items FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: colors colors_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER colors_set_updated_at BEFORE UPDATE ON fitz.colors FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_photos item_photos_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER item_photos_set_updated_at BEFORE UPDATE ON fitz.item_photos FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: locations locations_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER locations_set_updated_at BEFORE UPDATE ON fitz.locations FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: materials materials_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER materials_set_updated_at BEFORE UPDATE ON fitz.materials FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: occasions occasions_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER occasions_set_updated_at BEFORE UPDATE ON fitz.occasions FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: outfits outfits_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER outfits_set_updated_at BEFORE UPDATE ON fitz.outfits FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: seasons seasons_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER seasons_set_updated_at BEFORE UPDATE ON fitz.seasons FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: tags tags_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER tags_set_updated_at BEFORE UPDATE ON fitz.tags FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wash_log wash_log_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER wash_log_set_updated_at BEFORE UPDATE ON fitz.wash_log FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wear_log wear_log_set_updated_at; Type: TRIGGER; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+CREATE TRIGGER wear_log_set_updated_at BEFORE UPDATE ON fitz.wear_log FOR EACH ROW EXECUTE FUNCTION fitz.set_updated_at();਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: care_instructions care_instructions_item_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.care_instructions਍ഀ
+    ADD CONSTRAINT care_instructions_item_id_fkey FOREIGN KEY (item_id) REFERENCES fitz.clothing_items(item_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: clothing_items clothing_items_brand_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.clothing_items਍ഀ
+    ADD CONSTRAINT clothing_items_brand_id_fkey FOREIGN KEY (brand_id) REFERENCES fitz.brands(brand_id) ON DELETE SET NULL;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: clothing_items clothing_items_category_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.clothing_items਍ഀ
+    ADD CONSTRAINT clothing_items_category_id_fkey FOREIGN KEY (category_id) REFERENCES fitz.categories(category_id) ON DELETE SET NULL;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: clothing_items clothing_items_user_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.clothing_items਍ഀ
+    ADD CONSTRAINT clothing_items_user_id_fkey FOREIGN KEY (user_id) REFERENCES fitz.users(user_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_colors item_colors_color_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_colors਍ഀ
+    ADD CONSTRAINT item_colors_color_id_fkey FOREIGN KEY (color_id) REFERENCES fitz.colors(color_id) ON DELETE RESTRICT;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_colors item_colors_item_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_colors਍ഀ
+    ADD CONSTRAINT item_colors_item_id_fkey FOREIGN KEY (item_id) REFERENCES fitz.clothing_items(item_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_occasions item_occasions_item_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_occasions਍ഀ
+    ADD CONSTRAINT item_occasions_item_id_fkey FOREIGN KEY (item_id) REFERENCES fitz.clothing_items(item_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_occasions item_occasions_occasion_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_occasions਍ഀ
+    ADD CONSTRAINT item_occasions_occasion_id_fkey FOREIGN KEY (occasion_id) REFERENCES fitz.occasions(occasion_id) ON DELETE RESTRICT;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_photos item_photos_item_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_photos਍ഀ
+    ADD CONSTRAINT item_photos_item_id_fkey FOREIGN KEY (item_id) REFERENCES fitz.clothing_items(item_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_seasons item_seasons_item_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_seasons਍ഀ
+    ADD CONSTRAINT item_seasons_item_id_fkey FOREIGN KEY (item_id) REFERENCES fitz.clothing_items(item_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_seasons item_seasons_season_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_seasons਍ഀ
+    ADD CONSTRAINT item_seasons_season_id_fkey FOREIGN KEY (season_id) REFERENCES fitz.seasons(season_id) ON DELETE RESTRICT;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_tags item_tags_item_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_tags਍ഀ
+    ADD CONSTRAINT item_tags_item_id_fkey FOREIGN KEY (item_id) REFERENCES fitz.clothing_items(item_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: item_tags item_tags_tag_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.item_tags਍ഀ
+    ADD CONSTRAINT item_tags_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES fitz.tags(tag_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: locations locations_user_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.locations਍ഀ
+    ADD CONSTRAINT locations_user_id_fkey FOREIGN KEY (user_id) REFERENCES fitz.users(user_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: outfit_items outfit_items_item_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.outfit_items਍ഀ
+    ADD CONSTRAINT outfit_items_item_id_fkey FOREIGN KEY (item_id) REFERENCES fitz.clothing_items(item_id) ON DELETE RESTRICT;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: outfit_items outfit_items_outfit_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.outfit_items਍ഀ
+    ADD CONSTRAINT outfit_items_outfit_id_fkey FOREIGN KEY (outfit_id) REFERENCES fitz.outfits(outfit_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: outfits outfits_user_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.outfits਍ഀ
+    ADD CONSTRAINT outfits_user_id_fkey FOREIGN KEY (user_id) REFERENCES fitz.users(user_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_requests suggestion_requests_color_preference_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.suggestion_requests਍ഀ
+    ADD CONSTRAINT suggestion_requests_color_preference_fkey FOREIGN KEY (color_preference) REFERENCES fitz.colors(color_id) ON DELETE SET NULL;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_requests suggestion_requests_occasion_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.suggestion_requests਍ഀ
+    ADD CONSTRAINT suggestion_requests_occasion_id_fkey FOREIGN KEY (occasion_id) REFERENCES fitz.occasions(occasion_id) ON DELETE SET NULL;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_requests suggestion_requests_season_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.suggestion_requests਍ഀ
+    ADD CONSTRAINT suggestion_requests_season_id_fkey FOREIGN KEY (season_id) REFERENCES fitz.seasons(season_id) ON DELETE SET NULL;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_requests suggestion_requests_user_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.suggestion_requests਍ഀ
+    ADD CONSTRAINT suggestion_requests_user_id_fkey FOREIGN KEY (user_id) REFERENCES fitz.users(user_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_results suggestion_results_outfit_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.suggestion_results਍ഀ
+    ADD CONSTRAINT suggestion_results_outfit_id_fkey FOREIGN KEY (outfit_id) REFERENCES fitz.outfits(outfit_id) ON DELETE SET NULL;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: suggestion_results suggestion_results_request_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.suggestion_results਍ഀ
+    ADD CONSTRAINT suggestion_results_request_id_fkey FOREIGN KEY (request_id) REFERENCES fitz.suggestion_requests(request_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: tags tags_user_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.tags਍ഀ
+    ADD CONSTRAINT tags_user_id_fkey FOREIGN KEY (user_id) REFERENCES fitz.users(user_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: users users_user_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.users਍ഀ
+    ADD CONSTRAINT users_user_id_fkey FOREIGN KEY (user_id) REFERENCES fitz.users(user_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wash_log wash_log_item_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.wash_log਍ഀ
+    ADD CONSTRAINT wash_log_item_id_fkey FOREIGN KEY (item_id) REFERENCES fitz.clothing_items(item_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wash_log wash_log_user_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.wash_log਍ഀ
+    ADD CONSTRAINT wash_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES fitz.users(user_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wear_log wear_log_item_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.wear_log਍ഀ
+    ADD CONSTRAINT wear_log_item_id_fkey FOREIGN KEY (item_id) REFERENCES fitz.clothing_items(item_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- Name: wear_log wear_log_user_id_fkey; Type: FK CONSTRAINT; Schema: fitz; Owner: -਍ഀ
+--਍ഀ
+਍ഀ
+ALTER TABLE ONLY fitz.wear_log਍ഀ
+    ADD CONSTRAINT wear_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES fitz.users(user_id) ON DELETE CASCADE;਍ഀ
+਍ഀ
+਍ഀ
+--਍ഀ
+-- PostgreSQL database dump complete਍ഀ
+--਍ഀ
+਍ഀ
+਍ഀ
+਍ഀ
