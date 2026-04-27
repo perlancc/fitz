@@ -21,7 +21,7 @@ def run_psql_file(psql_path: str, db_url: str, sql_file: Path) -> None:
     result = subprocess.run(cmd, capture_output=True, text=True)
 
     if result.returncode != 0:
-        print("\n❌ ERROR while running:", sql_file)
+        print("\n ERROR while running:", sql_file)
         if result.stdout.strip():
             print("\n--- STDOUT ---\n", result.stdout)
         if result.stderr.strip():
@@ -32,7 +32,7 @@ def run_psql_file(psql_path: str, db_url: str, sql_file: Path) -> None:
     if result.stdout.strip():
         print(result.stdout)
 
-    print(f"✅ Done: {sql_file}")
+    print(f" Done: {sql_file}")
 
 
 def main() -> None:
@@ -43,13 +43,13 @@ def main() -> None:
     seed_file = repo_root / "db" / "02_seed.sql"
 
     # Use a single DATABASE_URL env var (recommended)
-    # Example (local): postgresql://postgres:postgres@localhost:5432/fitz_local
+    # Example (local): postgresql://postgres:12182000@localhost:5433/fitz_local
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
         print(
             "DATABASE_URL is not set.\n"
             "Set it like this (PowerShell):\n"
-            '  $env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/fitz_local"\n'
+            '  $env:DATABASE_URL="postgresql://postgres:12182000@localhost:5433/fitz_local"\n'
             "Then run:\n"
             "  python main.py\n"
         )
@@ -63,7 +63,7 @@ def main() -> None:
     run_psql_file(psql_path, db_url, schema_file)
     run_psql_file(psql_path, db_url, seed_file)
 
-    print("\n🎉 All migrations applied successfully.")
+    print("\n All migrations applied successfully.")
 
 
 if __name__ == "__main__":
